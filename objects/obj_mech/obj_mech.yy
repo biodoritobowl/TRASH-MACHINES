@@ -35,8 +35,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_ball",
-    "path":"sprites/spr_ball/spr_ball.yy",
+    "name":"spr_mechs",
+    "path":"sprites/spr_mechs/spr_mechs.yy",
   },
   "spriteMaskId":null,
   "visible":true,

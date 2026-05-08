@@ -1,139 +1,131 @@
 //================================================
 // MOVIMENTO NORMAL
 //================================================
-
 if (!stunned)
 {
-    // muda direção aleatoriamente
-	if(drunk){
-		change_timer--;
-
-	    if (change_timer <= 0)
-	    {
-	        move_dir += random_range(-90,90);
-	        change_timer = irandom_range(30,120);
-	    }
-	}
-    // aceleração
+    if(drunk){
+        change_timer--;
+        if (change_timer <= 0)
+        {
+            move_dir += random_range(-90, 90);
+            change_timer = irandom_range(30, 120);
+        }
+    }
+    
+    // Aplica aceleração baseada na move_dir atual
     xspd += lengthdir_x(accel, move_dir);
     yspd += lengthdir_y(accel, move_dir);
 }
 
-
-
 //================================================
 // LIMITADOR DE VELOCIDADE
 //================================================
-
-var spd = point_distance(0,0,xspd,yspd);
-
+var spd = point_distance(0, 0, xspd, yspd);
 if (spd > max_speed)
 {
-    var vel_dir = point_direction(0,0,xspd,yspd);
-
+    var vel_dir = point_direction(0, 0, xspd, yspd);
     xspd = lengthdir_x(max_speed, vel_dir);
     yspd = lengthdir_y(max_speed, vel_dir);
 }
 
-
-
 //================================================
-// MOVIMENTO X
+// COLISÃO E MOVIMENTO X
 //================================================
-
-var move_x = round(xspd);
-
-repeat abs(move_x)
+if (place_meeting(x + xspd, y, obj_wall)) 
 {
-    x += sign(move_x);
-
-    if (place_meeting(x,y,obj_wall) || place_meeting(x, y, other.radius))
-    {
-        // desfaz último pixel
-        x -= sign(move_x);
-
-        // salva bounce
-        bounce_x = -xspd * 0.8;
-        bounce_y = -yspd * 0.8;
-
-        // trava mech
-        xspd = 0;
-        yspd = 0;
-
-        stunned = true;
-
-        // reflete direção
-        move_dir = 180 - move_dir;
-
-        // tempo do stun
-        alarm[0] = 10;
-
-        break;
+    while (!place_meeting(x + sign(xspd), y, obj_wall)) {
+        x += sign(xspd);
     }
+    
+    // REFLEXÃO X: Inverte a direção horizontal
+    move_dir = point_direction(0, 0, -lengthdir_x(1, move_dir), lengthdir_y(1, move_dir));
+    
+    bounce_x = -xspd * 0.8;
+    xspd = 0; // Para a força atual imediatamente
+    stunned = true;
+    alarm[0] = 1;
+} 
+else 
+{
+    x += xspd;
+}
+
+//================================================
+// COLISÃO E MOVIMENTO Y
+//================================================
+if (place_meeting(x, y + yspd, obj_wall)) 
+{
+    while (!place_meeting(x, y + sign(yspd), obj_wall)) {
+        y += sign(yspd);
+    }
+
+    // REFLEXÃO Y: Inverte a direção vertical
+    move_dir = point_direction(0, 0, lengthdir_x(1, move_dir), -lengthdir_y(1, move_dir));
+    
+    bounce_y = -yspd * 0.8;
+    yspd = 0; // Para a força atual imediatamente
+    stunned = true;
+    alarm[0] = 1;
+} 
+else 
+{
+    y += yspd;
 }
 
 
-
 //================================================
-// MOVIMENTO Y
+// COLISÃO RADIUS
 //================================================
 
-var move_y = round(yspd);
-
-repeat abs(move_y)
-{
-    y += sign(move_y);
-
-    if (place_meeting(x,y,obj_wall))
-    {
-        y -= sign(move_y);
-
-        bounce_x = -xspd * 0.8;
-        bounce_y = -yspd * 0.8;
-
-        xspd = 0;
-        yspd = 0;
-
-        stunned = true;
-
-        move_dir = -move_dir;
-
-        alarm[0] = 10;
-        break;
-    }
+with(obj_mech){	
+	if (circle_collision(id, other))
+	{
+		if(id.mass > other.mass){
+			physics_impact(id, other);
+		}else{
+			physics_impact(other, id);
+		}
+		pick_strike(id.xspd, id.yspd, id.max_speed, id.strike, other);
+		hit_cooldown = true;
+		locked_hp = hp;
+		stun = true;
+		alarm[0] = 5
+	}
 }
 
-
-
 //================================================
-// DRAG
+// DRAG E FACING
 //================================================
-
 if (!stunned)
 {
     xspd *= drag;
     yspd *= drag;
+    
+    var curr_spd = point_distance(0, 0, xspd, yspd);
+    if (curr_spd > 0.1) {
+        var target_dir = point_direction(0, 0, xspd, yspd);
+        facing_dir = lerp(facing_dir, target_dir, 0.1);
+    }
 }
 
-
-
-//================================================
-// FACING
-//================================================
-
-spd = point_distance(0,0,xspd,yspd);
-
-if (spd > 0.1)
+if (abs(xspd) > 0.1) 
 {
-    var target_dir = point_direction(0,0,xspd,yspd);
+    // Fixa o lado baseado no sinal da velocidade (1 para direita, -1 para esquerda)
+    image_xscale = sign(xspd);
+}
 
-    facing_dir = lerp(facing_dir,target_dir,0.1);
+// ================================================
+// VIDA
+// ================================================
+
+if (hp <= 0){
+	xspd = 0
+	yspd = 0
+	max_speed = 0
+	strike = 0
+	
+	image_blend = c_red
 }
 
 
 
-//================================================
-// VISUAL
-//================================================
-
-image_angle = facing_dir;

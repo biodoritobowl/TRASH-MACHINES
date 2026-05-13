@@ -20,7 +20,7 @@ function physics_impact(a, b)
 		b.y += lengthdir_y(sep, dir);
 	}
 	
-    var force = 4;
+    var force = 8;
 
     a.xspd += lengthdir_x(force / a.mass, dir + 180);
     a.yspd += lengthdir_y(force / a.mass, dir + 180);

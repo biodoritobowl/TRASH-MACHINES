@@ -1,0 +1,18 @@
+{
+  "FolderOrderSettings":[
+    {"name":"mechs","order":3,"path":"folders/Sprites/mechs.yy",},
+    {"name":"temp","order":1,"path":"folders/Sprites/temp.yy",},
+    {"name":"weapons","order":2,"path":"folders/Sprites/weapons.yy",},
+  ],
+  "ResourceOrderSettings":[
+    {"name":"obj_collision","order":1,"path":"objects/obj_collision/obj_collision.yy",},
+    {"name":"obj_info","order":2,"path":"objects/obj_info/obj_info.yy",},
+    {"name":"spr_background","order":1,"path":"sprites/spr_background/spr_background.yy",},
+    {"name":"spr_ball","order":2,"path":"sprites/spr_ball/spr_ball.yy",},
+    {"name":"spr_circle","order":3,"path":"sprites/spr_circle/spr_circle.yy",},
+    {"name":"spr_diamond","order":4,"path":"sprites/spr_diamond/spr_diamond.yy",},
+    {"name":"spr_square","order":5,"path":"sprites/spr_square/spr_square.yy",},
+    {"name":"spr_triangle","order":6,"path":"sprites/spr_triangle/spr_triangle.yy",},
+    {"name":"spr_wall","order":7,"path":"sprites/spr_wall/spr_wall.yy",},
+  ],
+}
